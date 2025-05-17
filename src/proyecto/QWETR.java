@@ -14,6 +14,7 @@ public class QWETR {
         lea.useDelimiter("\n");
 
         int opcionMenu = 0;
+        boolean abrirCaja=false, compra=false;
         double caja =0, cantidadIngresada = 0, isv=0, cantKilosVenta = 0;
         String producto = "";
         double stockAzucar = 0, stockAvena = 0, stockMaiz = 0, stockTrigo = 0;
@@ -38,7 +39,7 @@ public class QWETR {
 
                 switch (opcionMenu) {
                     case 1:
-                        System.out.println("-------------------------- ABRIR CAJA -----------------------------");
+                        System.out.println("\n--------------------- ABRIR CAJA --------------------------");
 
                         while (true) {
                             try {
@@ -48,6 +49,7 @@ public class QWETR {
                                     System.out.println("Error: Ingrese una cantidad valida.");
                                 } else {
                                     caja += cantidadIngresada;
+                                    abrirCaja = true;
                                     System.out.println("Se ha guardado correctamente.");
                                     System.out.println("___________________________________________________________");
                                     System.out.println("                       TIENDA JAVA                         ");
@@ -67,6 +69,11 @@ public class QWETR {
                         }
                         break;
                     case 2:
+                        if (!compra){
+                            System.out.println("Error: No es posible habilitar ventas, debe de realizar una compra.");
+                            break;
+                        }
+                        
                         System.out.println("\n----------------------- VENTAS ----------------------------");
 
                         String tipoClienteVenta;
@@ -234,6 +241,10 @@ public class QWETR {
                         System.out.println("________________________________________________________________");
                         break;
                     case 3:
+                        if(!abrirCaja){
+                            System.out.println("Error: Debe de abrir caja antes de poder realizar compras.");
+                            break;
+                        }
                          System.out.println("\n------------------------- COMPRAS ---------------------------");
 
                         String tipoProveedor;
@@ -337,7 +348,7 @@ public class QWETR {
                                         cantKilosCompra = lea.nextDouble();
                                         if (cantKilosCompra <= 0) {
                                             System.out.println("Error: Ingrese una cantidad valida.");
-                                            continue;
+                                            return;
                                         }
 
                                         totalProductoCompra = cantKilosCompra * precioUniCompra;
@@ -367,6 +378,8 @@ public class QWETR {
                                             System.out.println("________________________________________________________________");   
                                             
                                             caja -= totalPagarCompra;
+                                            
+                                            compra = true;
                                         }else{
                                             System.out.println("Error: No se puede realizar la compra, saldo insuficiente.");
                                         }     

@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package proyecto;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -93,10 +92,10 @@ public class QWETR {
                         }
 
                         int codProductoVenta = 0;
-                        String facturaVenta = " ",
-                         adquirirProducto,
+                        String facturaVenta = "",
+                         adquirirProducto="",
                          porcentDescuento = " ";
-                        double precioUniVenta = 0.00;
+                        double precioUniVenta = 0;
                         double totalProductoVenta = 0,
                          subtotalVenta = 0,
                          descuento,
@@ -207,7 +206,6 @@ public class QWETR {
                             adquirirProducto = lea.next().toUpperCase();
 
                         } while (adquirirProducto.equals("SI"));
-                        isv = subtotalVenta * 0.07;
                         if (subtotalVenta > 5000) {
                             descuento = subtotalVenta* 0.10;
                             porcentDescuento = "10%";
@@ -218,7 +216,8 @@ public class QWETR {
                             descuento = 0;
                             porcentDescuento = "";
                         }
-
+                        
+                        isv = subtotalVenta * 0.07;
                         totalPagarVenta = (subtotalVenta - descuento) + isv;
 
                         System.out.println("_________________________________________________________________");
@@ -232,7 +231,7 @@ public class QWETR {
                         System.out.println(facturaVenta);
                         System.out.println("----------------------------------------------------------------");
                         System.out.println(String.format("%-50s L. %.2f", "Subtotal:", subtotalVenta));
-                        System.out.println(String.format("%-50s L. %.2f", "Descuento: " + porcentDescuento + ":", descuento));
+                        System.out.println(String.format("%-50s L. %.2f", "Descuento " + porcentDescuento + ":", descuento));
                         System.out.println(String.format("%-50s L. %.2f", "ISV:", isv));
                         System.out.println("----------------------------------------------------------------");
                         System.out.println(String.format("%-50s L. %.2f", "TOTAL A PAGAR:", totalPagarVenta));
@@ -251,7 +250,7 @@ public class QWETR {
                         char proveedor;
 
                         while (true) {
-                            System.out.print("Ingrese el tipo del cliente (A, B o C): ");
+                            System.out.print("Ingrese el tipo de Proveedor (A, B o C): ");
                             tipoProveedor = lea.next().toUpperCase();
 
                             if (tipoProveedor.equals("A") || tipoProveedor.equals("B") || tipoProveedor.equals("C")) {
@@ -346,9 +345,17 @@ public class QWETR {
                                     try {
                                         System.out.print("Ingrese la cantidad en kilogramos de " + producto + " a comprar : ");
                                         cantKilosCompra = lea.nextDouble();
-                                        if (cantKilosCompra <= 0) {
-                                            System.out.println("Error: Ingrese una cantidad valida.");
-                                            return;
+                                        if (codProductoCompra == 1 && cantKilosCompra>0) {
+                                            stockAzucar += cantKilosCompra;
+                                        } else if (codProductoCompra == 2 &&  cantKilosCompra>0 ) {
+                                            stockAvena -= cantKilosCompra;
+                                        } else if (codProductoCompra == 3 &&  cantKilosCompra>0) {
+                                            stockTrigo -= cantKilosCompra;
+                                        } else if (codProductoCompra == 4 &&  cantKilosCompra>0) {
+                                            stockMaiz += cantKilosCompra;
+                                        } else {
+                                            System.out.println("Error: No hay suficiente cantidad de productos.");
+                                            continue;
                                         }
 
                                         totalProductoCompra = cantKilosCompra * precioUniCompra;
@@ -396,7 +403,7 @@ public class QWETR {
                         
                     case 6:
                         System.out.println("Saliendo del sistema...");
-                        return;
+                        break;
 
                     default:
                         System.out.println("Error: Opcion invalida. Ingrese una opcion del (1 - 6).");

@@ -11,12 +11,15 @@ public class QWETR {
     public static void main(String[] args) {
         Scanner lea = new Scanner(System.in).useDelimiter("\n");
 
-        int opcionMenu = 0;
+        int opcionMenu = 0, numeroCompras=0, numeroVentas=0;
+        String producto = "", productoMayorGanancia="", productoMayorGasto="";
         boolean abrirCaja=false, compra=false;
-        double caja =0, cantidadIngresada = 0, isv=0, cantKilosVenta = 0;
-        String producto = "";
         double stockAzucar = 0, stockAvena = 0, stockMaiz = 0, stockTrigo = 0;
-
+        double caja =0, cantidadIngresada = 0, isv=0, cantKilosVenta = 0;
+        double totalVenta=0, totalCompra=0, mayorGananciaCompra=0, mayorGananciaVentas=0;
+        double margenGanancia,valorMedioVenta, valorMedioCompra; 
+        double cantidadVentaAzucar=0, cantidadVentaAvena=0, cantidadVentaTrigo=0, cantidadVentaMaiz=0;
+   
         while (opcionMenu != 6) {
             try {
                 System.out.println(" __________________________________________");
@@ -179,15 +182,19 @@ public class QWETR {
                                         boolean stockDisponible=false;
                                         if (codProductoVenta == 1 && stockAzucar >= cantKilosVenta) {
                                             stockAzucar -= cantKilosVenta;
+                                            cantidadVentaAzucar += cantKilosVenta;
                                             stockDisponible=true;
                                         } else if (codProductoVenta == 2 && stockAvena >= cantKilosVenta) {
                                             stockAvena -= cantKilosVenta;
+                                            cantidadVentaAvena += cantKilosVenta;
                                             stockDisponible=true;                                            
                                         } else if (codProductoVenta == 3 && stockTrigo >= cantKilosVenta) {
                                             stockTrigo -= cantKilosVenta;
+                                            cantidadVentaTrigo += cantKilosVenta;
                                             stockDisponible=true;                                            
                                         } else if (codProductoVenta == 4 && stockMaiz >= cantKilosVenta) {
                                             stockMaiz -= cantKilosVenta;
+                                            cantidadVentaMaiz += cantKilosVenta;
                                             stockDisponible=true;                                           
                                         } else {
                                             System.out.println("Error: No hay suficiente cantidad de productos.");
@@ -228,6 +235,8 @@ public class QWETR {
                         totalPagarVenta = (subtotalVenta - descuento) + isv;
                         
                         caja += totalPagarVenta;
+                        numeroVentas ++;
+                        totalVenta += totalPagarVenta;
 
                         System.out.println("_________________________________________________________________");
                         System.out.println("                          TIENDA JAVA                           ");
@@ -394,6 +403,8 @@ public class QWETR {
                                         System.out.println("________________________________________________________________");
 
                                         caja -= totalPagarCompra;
+                                        totalCompra += totalPagarCompra;
+                                        numeroCompras++;
                                         compra = true;
                                         }else{
                                             System.out.println("Error: No se puede realizar la compra, saldo insuficiente.");
@@ -411,12 +422,35 @@ public class QWETR {
                             System.out.println("Error: Debe abrir caja antes de poder ver reportes.");
                             break;
                         }
-                         
+                        
+                        margenGanancia=totalVenta-totalCompra;
+                        valorMedioVenta=totalVenta/numeroVentas;
+                        valorMedioCompra=totalCompra/numeroCompras;
+                        
+                                
                         System.out.println("\n------------------------- REPORTES ---------------------------");
                         System.out.println("_________________________________________________________________");
-                        System.out.println("                          TIENDA JAVA                           ");
-                        System.out.println("                       REPORTE DE INVENTARIO                    ");
+                        System.out.println("                          TIENDA JAVA                            ");
+                        System.out.println("                            REPORTE                              ");
                         System.out.println("_________________________________________________________________");
+                        System.out.println(String.format("%-20s %.2f LPS.", "Cantidad Actual:", caja));
+                        System.out.println("-----------------------------------------------------------------");
+                        System.out.println(String.format("%-20s", "Numero de Compras:", numeroCompras));
+                        System.out.println(String.format("%-20s", "Numero de Ventas:", numeroVentas));
+                        System.out.println("-----------------------------------------------------------------");
+                        System.out.println(String.format("%-20s %.2f LPS.", "Total de Venta:", totalVenta));
+                        System.out.println(String.format("%-20s %.2f LPS.", "Total de Compra:", totalCompra));
+                        System.out.println(String.format("%-20s %.2f LPS.", "Margen de Ganancia:", margenGanancia));
+                        System.out.println("-----------------------------------------------------------------");
+                        System.out.println(String.format("%-20s %.2f LPS.", "Valor Medio de Venta:", valorMedioVenta));
+                        System.out.println(String.format("%-20s %.2f LPS.", "Valor Medio Compra:", valorMedioCompra));
+                        System.out.println("-----------------------------------------------------------------");
+                        
+                        
+                        
+
+                        
+                        
                     case 6:
                         System.out.println("Saliendo del sistema...");
                         break;

@@ -9,8 +9,7 @@ import java.util.Scanner;
 public class QWETR {
 
     public static void main(String[] args) {
-        Scanner lea = new Scanner(System.in);
-        lea.useDelimiter("\n");
+        Scanner lea = new Scanner(System.in).useDelimiter("\n");
 
         int opcionMenu = 0;
         boolean abrirCaja=false, compra=false;
@@ -68,6 +67,10 @@ public class QWETR {
                         }
                         break;
                     case 2:
+                        if (!abrirCaja){
+                            System.out.println("Error: No es posible habilitar ventas, debe de abrir caja.");
+                            break;
+                        }
                         if (!compra){
                             System.out.println("Error: No es posible habilitar ventas, debe de realizar una compra.");
                             break;
@@ -92,14 +95,9 @@ public class QWETR {
                         }
 
                         int codProductoVenta = 0;
-                        String facturaVenta = "",
-                         adquirirProducto="",
-                         porcentDescuento = " ";
+                        String facturaVenta = "", adquirirProducto="", porcentDescuento = "";
                         double precioUniVenta = 0;
-                        double totalProductoVenta = 0,
-                         subtotalVenta = 0,
-                         descuento,
-                         totalPagarVenta=0;
+                        double totalProductoVenta = 0, subtotalVenta = 0, descuento=0, totalPagarVenta=0;
                        
 
                         do {
@@ -178,21 +176,30 @@ public class QWETR {
                                             continue;
                                         }
 
+                                        boolean stockDisponible=false;
                                         if (codProductoVenta == 1 && stockAzucar >= cantKilosVenta) {
                                             stockAzucar -= cantKilosVenta;
+                                            stockDisponible=true;
                                         } else if (codProductoVenta == 2 && stockAvena >= cantKilosVenta) {
                                             stockAvena -= cantKilosVenta;
+                                            stockDisponible=true;                                            
                                         } else if (codProductoVenta == 3 && stockTrigo >= cantKilosVenta) {
                                             stockTrigo -= cantKilosVenta;
+                                            stockDisponible=true;                                            
                                         } else if (codProductoVenta == 4 && stockMaiz >= cantKilosVenta) {
                                             stockMaiz -= cantKilosVenta;
+                                            stockDisponible=true;                                           
                                         } else {
                                             System.out.println("Error: No hay suficiente cantidad de productos.");
-                                            continue;
+                                            break;
                                         }
 
+                                        if (!stockDisponible){
+                                            break;
+                                        }
+                                        
                                         totalProductoVenta = cantKilosVenta * precioUniVenta;
-                                        facturaVenta += String.format("%-15s %-16f %-20f L. %.2f\n", producto, cantKilosVenta, precioUniVenta, totalProductoVenta);
+                                        facturaVenta = String.format("%-17s %-18s %-10s L. %.2f\n", producto, String.format("%.0f", cantKilosVenta), String.format("%.0f", precioUniVenta), totalProductoVenta);
                                         subtotalVenta += totalProductoVenta;
                                         break;
                                     } catch (InputMismatchException e) {
@@ -219,6 +226,8 @@ public class QWETR {
                         
                         isv = subtotalVenta * 0.07;
                         totalPagarVenta = (subtotalVenta - descuento) + isv;
+                        
+                        caja += totalPagarVenta;
 
                         System.out.println("_________________________________________________________________");
                         System.out.println("                          TIENDA JAVA                           ");
@@ -244,8 +253,8 @@ public class QWETR {
                             System.out.println("Error: Debe de abrir caja antes de poder realizar compras.");
                             break;
                         }
-                         System.out.println("\n------------------------- COMPRAS ---------------------------");
-
+                        
+                        System.out.println("\n------------------------- COMPRAS ---------------------------");
                         String tipoProveedor;
                         char proveedor;
 
@@ -263,12 +272,9 @@ public class QWETR {
                         }
                         
                         int codProductoCompra=0;
-                        String facturaCompra = " ";
-                        double precioUniCompra = 0.00,
-                         cantKilosCompra = 0;
-                        double totalProductoCompra = 0,
-                         subtotalCompra = 0,
-                         totalPagarCompra=0;
+                        String facturaCompra = "";
+                        double precioUniCompra = 0.00, cantKilosCompra = 0;
+                        double totalProductoCompra = 0,subtotalCompra = 0, totalPagarCompra=0;
                        
                         
                             System.out.println(" ------------------------------------------------------");
@@ -296,26 +302,25 @@ public class QWETR {
                                 }
                             }
                             
-                            boolean tipoProducto = true;
+                            boolean tipoCompra = true;
                             switch (codProductoCompra) {
                                 case 1:
                                     producto = "Azucar";
                                     precioUniCompra = 25.00;
                                     if (proveedor == 'B'||proveedor == 'C') {
                                         System.out.println("Error: Este producto no esta disponible por el proveedor.");
-                                        tipoProducto = false;
+                                        tipoCompra = false;
                                     }
                                     break;
                                 case 2:
                                     producto = "Avena";
                                     if (proveedor=='A'){
-                                        System.out.println("Este producto no esta disponible.");
+                                        System.out.println("Error: Este producto no esta disponible por el proveedor.");
+                                         tipoCompra = false;
                                     }else if (proveedor=='B'){
                                         precioUniCompra = 20.00;
-                                        tipoProducto = true;
                                     }else if(proveedor =='C'){
                                         precioUniCompra = 22.00;
-                                        tipoProducto = true;
                                     }
                                     break;
                                 case 3:
@@ -323,7 +328,7 @@ public class QWETR {
                                     precioUniCompra = 30.00;
                                     if (proveedor == 'A'|| proveedor== 'C') {
                                         System.out.println("Error: Este producto no esta disponible por el proveedor.");
-                                        tipoProducto = false;
+                                        tipoCompra = false;
                                     }
                                     break;
                                 case 4:
@@ -331,62 +336,65 @@ public class QWETR {
                                     precioUniCompra = 18.00;
                                     if (proveedor == 'B'||proveedor == 'C') {
                                         System.out.println("Error: Este producto no esta disponible por el proveedor.");
-                                        tipoProducto = false;
+                                        tipoCompra = false;
                                     }
                                     break;
                                 default:
                                     System.out.println("Error: Esta opcion no existe.");
-                                    tipoProducto = false;
+                                    tipoCompra = false;
                                     break;
                             }
                             
-                             if (tipoProducto) {
-                                while (true) {
-                                    try {
-                                        System.out.print("Ingrese la cantidad en kilogramos de " + producto + " a comprar : ");
-                                        cantKilosCompra = lea.nextDouble();
-                                        if (codProductoCompra == 1 && cantKilosCompra>0) {
+                        if (tipoCompra) {
+                            while (true) {
+                                try {
+                                    System.out.print("Ingrese la cantidad en kilogramos de " + producto + " a comprar : ");
+                                    cantKilosCompra = lea.nextDouble();
+
+                                    if (cantKilosCompra <= 0) {
+
+                                        System.out.println("Error: Ingrese una cantidad válida mayor que cero.");
+                                        continue;
+                                    }
+
+                                    totalProductoCompra = cantKilosCompra * precioUniCompra;
+                                    subtotalCompra += totalProductoCompra;
+                                    isv = subtotalCompra * 0.07;
+                                    totalPagarCompra = subtotalCompra + isv;
+
+                                    if (caja >= totalPagarCompra) {
+                                        if (codProductoCompra == 1) {
                                             stockAzucar += cantKilosCompra;
-                                        } else if (codProductoCompra == 2 &&  cantKilosCompra>0 ) {
-                                            stockAvena -= cantKilosCompra;
-                                        } else if (codProductoCompra == 3 &&  cantKilosCompra>0) {
-                                            stockTrigo -= cantKilosCompra;
-                                        } else if (codProductoCompra == 4 &&  cantKilosCompra>0) {
+                                        } else if (codProductoCompra == 2) {
+                                            stockAvena += cantKilosCompra;
+                                        } else if (codProductoCompra == 3) {
+                                            stockTrigo += cantKilosCompra;
+                                        } else if (codProductoCompra == 4) {
                                             stockMaiz += cantKilosCompra;
-                                        } else {
-                                            System.out.println("Error: No hay suficiente cantidad de productos.");
-                                            continue;
                                         }
-
-                                        totalProductoCompra = cantKilosCompra * precioUniCompra;
-                                        
-                                        if (caja>=totalProductoCompra){
-                                            facturaCompra += String.format("%-15s %-16f %-20f L. %.2f\n", producto, cantKilosCompra, precioUniCompra, totalProductoCompra);
-                                            subtotalCompra += totalProductoCompra;
-                                            isv = subtotalCompra * 0.07;
-                                            totalPagarCompra = subtotalCompra + isv;
-
-                                            System.out.println("_________________________________________________________________");
-                                            System.out.println("                          TIENDA JAVA                           ");
-                                            System.out.println("                            FACTURA                             ");
-                                            System.out.println("_________________________________________________________________");
-                                            System.out.println("Tipo de Cliente: " + proveedor);
-                                            System.out.println("----------------------------------------------------------------");
-                                            System.out.println("Producto       Cantidad(kg)       Precio Unit.       Total");
-                                            System.out.println("----------------------------------------------------------------");
-                                            System.out.println(facturaCompra);
-                                            System.out.println("----------------------------------------------------------------");
-                                            System.out.println(String.format("%-50s L. %.2f", "Subtotal:", subtotalCompra));
-                                            System.out.println(String.format("%-50s L. %.2f", "ISV:", isv));
-                                            System.out.println("----------------------------------------------------------------");
-                                            System.out.println(String.format("%-50s L. %.2f", "TOTAL A PAGAR:", totalPagarCompra));
-                                            System.out.println("----------------------------------------------------------------");
-                                            System.out.println("             GRACIAS POR SU COMPRA. ¡VUELVE PRONTO!             ");
-                                            System.out.println("________________________________________________________________");   
                                             
-                                            caja -= totalPagarCompra;
-                                            
-                                            compra = true;
+                                        facturaCompra = String.format("%-17s %-18s %-10s L. %.2f\n", producto, String.format("%.0f", cantKilosCompra), String.format("%.0f", precioUniCompra), totalProductoCompra);
+
+                                        System.out.println("_________________________________________________________________");
+                                        System.out.println("                          TIENDA JAVA                           ");
+                                        System.out.println("                            FACTURA                             ");
+                                        System.out.println("_________________________________________________________________");
+                                        System.out.println("Tipo de Cliente: " + proveedor);
+                                        System.out.println("----------------------------------------------------------------");
+                                        System.out.println("Producto       Cantidad(kg)       Precio Unit.       Total");
+                                        System.out.println("----------------------------------------------------------------");
+                                        System.out.println(facturaCompra);
+                                        System.out.println("----------------------------------------------------------------");
+                                        System.out.println(String.format("%-50s L. %.2f", "Subtotal:", subtotalCompra));
+                                        System.out.println(String.format("%-50s L. %.2f", "ISV:", isv));
+                                        System.out.println("----------------------------------------------------------------");
+                                        System.out.println(String.format("%-50s L. %.2f", "TOTAL A PAGAR:", totalPagarCompra));
+                                        System.out.println("----------------------------------------------------------------");
+                                        System.out.println("             GRACIAS POR SU COMPRA. ¡VUELVE PRONTO!             ");
+                                        System.out.println("________________________________________________________________");
+
+                                        caja -= totalPagarCompra;
+                                        compra = true;
                                         }else{
                                             System.out.println("Error: No se puede realizar la compra, saldo insuficiente.");
                                         }     
@@ -397,10 +405,18 @@ public class QWETR {
                                     }
                                 }
                             }
-                             
-                        
-                        
-                        
+                            break;
+                    case 4:
+                        if (!abrirCaja) {
+                            System.out.println("Error: Debe abrir caja antes de poder ver reportes.");
+                            break;
+                        }
+                         
+                        System.out.println("\n------------------------- REPORTES ---------------------------");
+                        System.out.println("_________________________________________________________________");
+                        System.out.println("                          TIENDA JAVA                           ");
+                        System.out.println("                       REPORTE DE INVENTARIO                    ");
+                        System.out.println("_________________________________________________________________");
                     case 6:
                         System.out.println("Saliendo del sistema...");
                         break;
